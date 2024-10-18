@@ -1,0 +1,46 @@
+---
+interface Props {
+  skill: string;
+  level: number;
+}
+const { skill, level } = Astro.props;
+---
+<div class="mb-6">
+  <div class="flex justify-between mb-2">
+    <span class="text-lg font-medium text-gray-200">{skill}</span>
+    <span class="text-sm font-medium text-gray-400">{level}%</span>
+  </div>
+  <div class="w-full bg-gray-700 rounded-full h-2.5">
+    <div class="skill-bar bg-gray-300 h-2.5 rounded-full transition-all duration-500 ease-out" data-level={level} style="width: 0%"></div>
+  </div>
+</div>
+
+<script>
+  function animateSkillBars() {
+    const skillBars = document.querySelectorAll('.skill-bar');
+    skillBars.forEach((bar) => {
+      const level = bar.getAttribute('data-level');
+      bar.style.width = '0%';
+      setTimeout(() => {
+        bar.style.width = `${level}%`;
+      }, 200);
+    });
+  }
+
+  // Animate on page load
+  document.addEventListener('DOMContentLoaded', animateSkillBars);
+
+  // Animate when scrolled into view
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateSkillBars();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  const skillsSection = document.querySelector('#skills');
+  if (skillsSection) {
+    observer.observe(skillsSection);
+  }
+</script>

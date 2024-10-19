@@ -9,7 +9,10 @@ interface Props {
 
 const { title, description, image, technologies, index } = Astro.props;
 ---
-<div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
+<div 
+  class="bg-gray-800 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 cursor-pointer"
+  onclick={`window.openProjectModal(${index})`}
+>
   <img src={image} alt={title} class="w-full h-48 object-cover" />
   <div class="p-6">
     <h3 class="text-xl font-semibold mb-2 text-gray-100">{title}</h3>
@@ -19,11 +22,12 @@ const { title, description, image, technologies, index } = Astro.props;
         <span class="bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm">{tech}</span>
       ))}
     </div>
-    <button
-      class="bg-gray-700 text-gray-100 px-4 py-2 rounded hover:bg-gray-600 transition duration-300 inline-block"
-      onclick={`window.openProjectModal(${index})`}
-    >
-      Ver proyecto
-    </button>
+    <div class="flex justify-start">
+      <button
+        class="bg-gray-700 text-gray-100 px-4 py-2 mt-4 rounded hover:bg-gray-600 transition duration-300 inline-block"
+      >
+        Ver proyecto
+      </button>
+    </div>
   </div>
 </div>

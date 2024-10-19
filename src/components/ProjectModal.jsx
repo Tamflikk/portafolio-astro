@@ -1,9 +1,56 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const ImagePreview = ({ image, onClose }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
+      onClick={(e) => {
+        e.stopPropagation(); // Evita que el click se propague al modal principal
+        onClose();
+      }}
+    >
+      <div className="relative max-w-[90vw] max-h-[90vh]">
+        <img
+          src={image}
+          alt="Preview"
+          className="max-w-full max-h-[90vh] object-contain"
+          onClick={(e) => e.stopPropagation()} // Evita que el click en la imagen la cierre
+        />
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // Evita que el click se propague
+            onClose();
+          }}
+          className="absolute top-4 right-4 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </motion.div>
+  );
+};
+
 const ProjectModal = ({ projects }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const openModal = (index) => {
     setCurrentProject(projects[index]);
@@ -12,9 +59,9 @@ const ProjectModal = ({ projects }) => {
 
   const closeModal = () => {
     setIsOpen(false);
+    setSelectedImage(null);
   };
 
-  // Expose the openModal function to the global scope
   React.useEffect(() => {
     window.openProjectModal = openModal;
   }, []);
@@ -26,7 +73,7 @@ const ProjectModal = ({ projects }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40"
           onClick={closeModal}
         >
           <motion.div
@@ -48,7 +95,11 @@ const ProjectModal = ({ projects }) => {
                   key={index}
                   src={img}
                   alt={`${currentProject.title} ${index + 1}`}
-                  className="w-full h-40 object-cover rounded"
+                  className="w-full h-40 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedImage(img);
+                  }}
                 />
               ))}
             </div>
@@ -71,6 +122,15 @@ const ProjectModal = ({ projects }) => {
               </button>
             </div>
           </motion.div>
+
+          <AnimatePresence>
+            {selectedImage && (
+              <ImagePreview
+                image={selectedImage}
+                onClose={() => setSelectedImage(null)}
+              />
+            )}
+          </AnimatePresence>
         </motion.div>
       )}
     </AnimatePresence>
